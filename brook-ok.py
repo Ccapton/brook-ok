@@ -595,9 +595,9 @@ def startService(stateMode,isBrook=True):
             code1 = -2
             if len(server_list_str) != 0:
                 if isBrook:
-                    code1 = os.system('nohup ./brook servers ' + server_list_str + '--tcpDeadline 10 >/dev/null 2>log &')
+                    code1 = os.system('nohup ./brook servers ' + server_list_str + '>/dev/null 2>log &')
                 else:
-                    code1 = os.system('nohup ./brook ssservers ' + server_list_str + '--tcpDeadline 10 >/dev/null 2>log &')
+                    code1 = os.system('nohup ./brook ssservers ' + server_list_str + '>/dev/null 2>log &')
             if code1 == 0:
                 # 这时 brook_pid,ss_pid 未被记录
                 hasServiceStart(isBrook)  # 为了记录brook_pid,ss_pid

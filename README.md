@@ -17,7 +17,7 @@
 
 </div>
     
-## 介绍
+# 介绍
 
 ### 什么是brook?
 **brook** 是一款跨平台(Linux/MacOS/Windows/Android/iOS)代理 / Vpn软件（可用于科学上网）
@@ -26,11 +26,13 @@
 ### 什么是brook-ok?
 **brook-ok** : 为了方便管理、开启brook和shadowsocks服务而生的程序  >_< !
 
+目前 brook-ok 目前仅支持管理brook、shadowsocks服务，其他服务例如Socks5、Delay、VPN均为实现其管理，请期待后续的添加。
+
 ## 说明文档
 更多信息，请参考说明文档,[点我查看说明文档](https://github.com/Ccapton/brook-ok/wiki/brook-ok%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)
 
 
-## 使用
+# 使用
 #### 下载
 源码文件以 brook-ok.py 保存在本地
 ```bash
