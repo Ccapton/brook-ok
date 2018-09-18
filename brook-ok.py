@@ -13,7 +13,7 @@ ss_pid = ''
 
 brook_version = ''
 
-version = '0.9.5'
+version = '0.9.6'
 title = ' Brook服务端配置程序 v%s '% version
 headline = '-'*10 + title +'-'*10
 
@@ -351,7 +351,8 @@ def addPort(isBrook=True):
         else:
             configjson['shadowsocks'].append({'port':port,'psw':str(psw)})
         saveConfigJson(configjson)
-        restartBrook()
+        if isBrook:restartBrook()
+        else:restartShadowsocks()
         manageBrook()
 
 def editPort(isBrook=True):
