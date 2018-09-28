@@ -324,18 +324,21 @@ def show_current_config(just_show=False,service_type=SERVICE_TYPE_BROOK,show_all
             color_print(GREEN, "----加密协议：aes-256-cfb")
         print('')
     if service_type == SERVICE_TYPE_SOCKS5 or show_all:
-        ss_list = config_json['socks5']
-        print(' 服务类型：Socks5')
-        for index in range(len(ss_list)):
-            ss = ss_list[index]
-            print(" (%d)" % (index + 1))
-            if ss['username'] == '':
-               color_print(YELLOW, " 说明：账号为空则客户端可直接通过地址、端口连接")
-            color_print(GREEN, "----地址：" + host_ip)
-            color_print(GREEN, "----端口：" + str(ss['port']))
-            color_print(GREEN, "----账号：" + str(ss['username']))
-            color_print(GREEN, "----密码：" + str(ss['psw']))
-        print('')
+        try:
+            ss_list = config_json['socks5']
+            print(' 服务类型：Socks5')
+            for index in range(len(ss_list)):
+                ss = ss_list[index]
+                print(" (%d)" % (index + 1))
+                if ss['username'] == '':
+                    color_print(YELLOW, " 说明：账号为空则客户端可直接通过地址、端口连接")
+                color_print(GREEN, "----地址：" + host_ip)
+                color_print(GREEN, "----端口：" + str(ss['port']))
+                color_print(GREEN, "----账号：" + str(ss['username']))
+                color_print(GREEN, "----密码：" + str(ss['psw']))
+            print('')
+        except Exception:
+            pass
     option_index = INDEX_BACK
     if not just_show:
         option_index = ok_input('输入数字0返回上级 (其他字符退出）：')
@@ -389,11 +392,16 @@ def manage_brook():
 
 def add_port(service_type=SERVICE_TYPE_BROOK):
     config_json = load_config_json()
-    if service_type==SERVICE_TYPE_SOCKS5 and len(config_json['socks5']) >=1 :
-        color_print(RED, '只允许一个socks5端口')
-        ok_input('回车返回上一级：')
-        manage_brook()
-        return
+    new_config_json = config_json
+    try:
+        if service_type == SERVICE_TYPE_SOCKS5 and len(config_json['socks5']) >= 1:
+            color_print(RED, '只允许一个socks5端口')
+            ok_input('回车返回上一级：')
+            manage_brook()
+            return
+    except Exception:
+        pass
+    username = ''
     if service_type==SERVICE_TYPE_SOCKS5:
         username = ok_input('输入socks5用户名：')
     import random
@@ -422,8 +430,17 @@ def add_port(service_type=SERVICE_TYPE_BROOK):
         elif service_type == SERVICE_TYPE_SS:
             config_json['shadowsocks'].append({'port': port, 'psw': str(psw)})
         elif service_type == SERVICE_TYPE_SOCKS5:
-            config_json['socks5'].append({'port': port, 'psw': str(psw), 'username': str(username)})
-        save_config_json(config_json)
+            try:
+                config_json['socks5'].append({'port': port, 'psw': str(psw), 'username': str(username)})
+            except Exception:
+                import json
+                socks5_list_json = []
+                socks5_list_json.append({'port': port, 'psw': str(psw), 'username': str(username)})
+                config_json_str = json.dumps(config_json)
+                new_config_json_str = config_json_str[:len(config_json_str)-1]+', "socks5": '+json.dumps(socks5_list_json)+'}'
+                new_config_json = json.loads(new_config_json_str)
+
+        save_config_json(new_config_json)
         stop_service(service_type)
         start_service(service_type=service_type)
         manage_brook()
@@ -438,10 +455,18 @@ def edit_port(service_type=SERVICE_TYPE_BROOK):
     elif service_type == SERVICE_TYPE_SS:
         length = len(config_json['shadowsocks'])
     elif service_type == SERVICE_TYPE_SOCKS5:
-        length = len(config_json['socks5'])
+        try:
+            length = len(config_json['socks5'])
+        except Exception:
+            if length == 0:
+                color_print(RED, '当前服务没有节点，请添加一个节点端口吧')
+                ok_input('回车返回上一级:')
+                manage_brook()
+                return
     if length == 0:
         color_print(RED, '当前服务没有节点，请添加一个节点端口吧')
         manage_brook()
+        return
     index = ok_input('输入你想要修改的节点序号:')
     try:
         index = int(index)
@@ -530,7 +555,14 @@ def del_port(service_type=SERVICE_TYPE_BROOK):
     elif service_type == SERVICE_TYPE_SS:
         length = len(config_json['shadowsocks'])
     elif service_type == SERVICE_TYPE_SOCKS5:
-        length = len(config_json['socks5'])
+        try:
+            length = len(config_json['socks5'])
+        except Exception:
+            if length == 0:
+                color_print(RED, '当前服务没有节点，请添加一个节点端口吧')
+                ok_input('回车返回上一级:')
+                manage_brook()
+                return
     if length == 0:
         color_print(RED, '当前服务没有节点，请添加一个节点端口吧')
         manage_brook()
@@ -728,6 +760,13 @@ def start_service(state_mode=False,service_type=SERVICE_TYPE_BROOK):
         service_name = 'shadowsocks'
     elif service_type == SERVICE_TYPE_SOCKS5:
         service_name = 'socks5'
+    try:
+        load_config_json()[service_name]
+    except Exception:
+        color_print(RED,'当前服务开启错误')
+        ok_input('回车返回上级：')
+        brook_action()
+        return
     server_list = load_config_json()[service_name]
     server_list_str = ''
     for server in server_list:
