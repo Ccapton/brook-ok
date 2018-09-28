@@ -15,7 +15,7 @@ ss_pid = ''
 
 brook_version = ''
 
-version = '0.9.6'
+version = '0.9.7'
 title = ' Brook服务端配置程序 v%s ' % version
 title_c = ' Brook客户端配置程序 v%s ' % version
 headline = '-'*10 + title + '-'*10

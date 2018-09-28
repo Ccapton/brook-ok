@@ -5,7 +5,7 @@
 <!--这里一定要固定格式，不然脚本升级时解析版本号时可能会出错-->
 <!--注意！-->
 <!--注意！-->
-### [v0.9.6](https://github.com/Ccapton/brook-ok/releases/download/v0.9.6/brook-ok.py)
+### [v0.9.7](https://github.com/Ccapton/brook-ok/releases/download/v0.9.7/brook-ok.py)
 
 [Brook](https://github.com/txthinking/brook) 服务端配置程序 ( Linux | MacOS )
  
