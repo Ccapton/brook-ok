@@ -1154,5 +1154,8 @@ def entry():
 
 
 if __name__ == "__main__":
+    if python_version == '2':
+        reload(sys)  # python3解释器下可能会提示错误，没关系，因为只有python2运行本程序才会走到这步
+        sys.setdefaultencoding("utf-8")  # 同上
     entry()
 
